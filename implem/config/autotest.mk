@@ -13,6 +13,7 @@ include config/directory.mk
 TOCLEAN:= log autotest.res tag.res
 TOPOLISH:= $(SIM_DIR) $(MEM_DIR)
 
+
 vpath %.s program:program/autotest:program/test_prof:program/test_periph
 
 # Pas de fichier .s à la racine
