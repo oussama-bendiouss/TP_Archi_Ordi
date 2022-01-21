@@ -28,7 +28,8 @@ architecture RTL of CPU_PC is
         S_Pre_Fetch,
         S_Fetch,
         S_Decode,
-        S_LUI
+        S_LUI,
+        S_ADDI
     );
 
     signal state_d, state_q : State_type;
@@ -110,11 +111,13 @@ begin
         cmd.RF_SIGN_enable    <= 'U';
         cmd.DATA_sel          <= DATA_from_pc;
 
+
         cmd.PC_we             <= '0';
         cmd.PC_sel            <= PC_from_alu;
 
         cmd.PC_X_sel          <= PC_X_cst_x00;
         cmd.PC_Y_sel          <= PC_Y_immU;
+
 
         cmd.TO_PC_Y_sel       <= TO_PC_Y_cst_x04;
 
@@ -161,18 +164,28 @@ begin
                 state_d <= S_Decode;
 
             when S_Decode =>
+                 cmd.TO_PC_Y_sel <= TO_PC_Y_cst_x04;
+ 	         cmd.PC_sel <= PC_from_pc;
+                 cmd.PC_we <= '1';
+                 state_d <= S_Init;
 -- On peut aussi utiliser un case, ...
 -- et ne pas le faire juste pour les branchements et auipc
          if status.IR(6 downto 0) = "0110111" then
-            cmd.TO_PC_Y_sel <= TO_PC_Y_cst_x04;
- 	    cmd.PC_sel <= PC_from_pc;
-            cmd.PC_we <= '1';
+           
             state_d <= S_LUI;
+         elsif status.IR(6 downto 0) = "0010011" and status.IR(14 downto 12) = "000" then
+         
+            state_d <= S_ADDI;
 	 else
             state_d <= S_Error; 
 -- Pour d ́etecter les rat ́es du d ́ecodage
          end if;
-       when S_LUI =>
+      
+                -- Décodage effectif des instructions,
+                -- à compléter par vos soins
+
+---------- Instructions avec immediat de type U ----------
+        when S_LUI =>
      -- rd <- ImmU + 0
          cmd.PC_X_sel <= PC_X_cst_x00;
          cmd.PC_Y_sel <= PC_Y_immU;
@@ -181,12 +194,19 @@ begin
 	 cmd.ADDR_sel <= ADDR_from_pc;
 	 cmd.mem_ce <= '1';
 	 cmd.mem_we <= '0';-- next state
-      state_d <= S_Fetch;
-                -- Décodage effectif des instructions,
-                -- à compléter par vos soins
-
----------- Instructions avec immediat de type U ----------
-       
+         state_d <= S_Fetch;
+        when S_ADDI =>
+     -- rd <- ImmU + 0
+         cmd.ALU_Y_sel <= ALU_Y_immI;
+         cmd.ALU_op <= ALU_plus;
+        
+         
+	 cmd.RF_we <= '1';
+	 cmd.DATA_sel <= DATA_from_alu;-- lecture mem[PC]
+	 cmd.ADDR_sel <= ADDR_from_pc;
+	 cmd.mem_ce <= '1';
+	 cmd.mem_we <= '0';-- next state
+         state_d <= S_Fetch;
 
 ---------- Instructions arithmétiques et logiques ----------
 
