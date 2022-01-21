@@ -100,32 +100,32 @@ begin
         cmd.rst               <= 'U';
         cmd.ALU_op            <= UNDEFINED;
         cmd.LOGICAL_op        <= UNDEFINED;
-        cmd.ALU_Y_sel         <= UNDEFINED;
+        cmd.ALU_Y_sel         <= ALU_Y_immI;
 
         cmd.SHIFTER_op        <= UNDEFINED;
         cmd.SHIFTER_Y_sel     <= UNDEFINED;
 
-        cmd.RF_we             <= 'U';
+        cmd.RF_we             <= '0';
         cmd.RF_SIZE_sel       <= UNDEFINED;
         cmd.RF_SIGN_enable    <= 'U';
-        cmd.DATA_sel          <= UNDEFINED;
+        cmd.DATA_sel          <= DATA_from_pc;
 
-        cmd.PC_we             <= true;
+        cmd.PC_we             <= '0';
         cmd.PC_sel            <= PC_from_alu;
 
         cmd.PC_X_sel          <= PC_X_cst_x00;
-        cmd.PC_Y_sel          <= PC_Y_cst_x04;
+        cmd.PC_Y_sel          <= PC_Y_immU;
 
-        cmd.TO_PC_Y_sel       <= UNDEFINED;
+        cmd.TO_PC_Y_sel       <= TO_PC_Y_cst_x04;
 
-        cmd.AD_we             <= 'U';
-        cmd.AD_Y_sel          <= UNDEFINED;
+        cmd.AD_we             <= '0';
+        cmd.AD_Y_sel          <= AD_Y_immI;
 
         cmd.IR_we             <= 'U';
 
-        cmd.ADDR_sel          <= UNDEFINED;
-        cmd.mem_we            <= 'U';
-        cmd.mem_ce            <= 'U';
+        cmd.ADDR_sel          <= ADDR_from_pc;
+        cmd.mem_we            <= '0';
+        cmd.mem_ce            <= '0';
 
         cmd_cs.CSR_we            <= UNDEFINED;
 

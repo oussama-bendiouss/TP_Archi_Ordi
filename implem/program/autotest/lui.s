@@ -1,5 +1,5 @@
 # TAG = lui
-	.text
+.text
 
 	lui x31, 0       #Test chargement d'une valeur nulle
 	lui x31, 0xfffff #Test chargement d'une valeur maximal sur 20 bits
