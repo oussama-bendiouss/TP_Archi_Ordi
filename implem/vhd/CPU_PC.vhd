@@ -29,7 +29,19 @@ architecture RTL of CPU_PC is
         S_Fetch,
         S_Decode,
         S_LUI,
-        S_ADDI
+        S_ADDI,
+	S_ADD,
+	S_SLL,
+	S_AUIPC,
+	S_SUB,
+	S_BEQ,
+	S_AND,
+	S_OR,
+	S_ORI,
+	S_XOR,
+	S_ANDI,
+	S_XORI,
+	S_LW
     );
 
     signal state_d, state_q : State_type;
@@ -171,11 +183,11 @@ begin
 -- On peut aussi utiliser un case, ...
 -- et ne pas le faire juste pour les branchements et auipc
          if status.IR(6 downto 0) = "0110111" then
-           
             state_d <= S_LUI;
-         elsif status.IR(6 downto 0) = "0010011" and status.IR(14 downto 12) = "000" then
-         
-            state_d <= S_ADDI;
+            elsif status.IR(6 downto 0) = "0010011" and status.IR(14 downto 12) = "000" then
+                  state_d <= S_ADDI;
+            elsif status.IR(6 downto 0) = "0110011"  and status.IR(14 downto 12) = "000" and status.IR(31 downto 25) = "0000000" then
+		    state_d <= S_ADD;
 	 else
             state_d <= S_Error; 
 -- Pour d ́etecter les rat ́es du d ́ecodage
@@ -207,6 +219,18 @@ begin
 	 cmd.mem_ce <= '1';
 	 cmd.mem_we <= '0';-- next state
          state_d <= S_Fetch;
+        when S_ADD =>
+		-- rd <- rs1 + rs2
+		cmd.ALU_Y_SEL <= ALU_Y_rf_rs2;
+		cmd.ALU_op <= ALU_plus;
+		cmd.RF_we <= '1';
+		cmd.DATA_sel <= DATA_from_alu;
+		-- lecture mem[PC]
+		cmd.ADDR_sel <= ADDR_from_pc;
+		cmd.mem_ce <= '1';
+		cmd.mem_we <= '0';
+		--next state
+		state_d <= S_Fetch;
 
 ---------- Instructions arithmétiques et logiques ----------
 
