@@ -32,16 +32,16 @@ architecture RTL of CPU_PC is
         S_ADDI,
 	S_ADD,
 	S_SLL,
-	S_AUIPC,
+	
 	S_SUB,
-	S_BEQ,
+	
 	S_AND,
 	S_OR,
 	S_ORI,
 	S_XOR,
 	S_ANDI,
-	S_XORI,
-	S_LW
+	S_XORI
+	
     );
 
     signal state_d, state_q : State_type;
